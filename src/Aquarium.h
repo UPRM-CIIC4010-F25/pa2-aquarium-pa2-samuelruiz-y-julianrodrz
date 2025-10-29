@@ -143,7 +143,18 @@ std::shared_ptr<GameEvent> DetectAquariumCollisions(std::shared_ptr<Aquarium> aq
 class AquariumGameScene : public GameScene {
     public:
         AquariumGameScene(std::shared_ptr<PlayerCreature> player, std::shared_ptr<Aquarium> aquarium, string name)
-        : m_player(std::move(player)) , m_aquarium(std::move(aquarium)), m_name(name){}
+        : m_player(std::move(player)) , m_aquarium(std::move(aquarium)), m_name(name){
+            // Setup sound effects
+            m_chomp.load("chomp-1.ogg");
+            m_chomp.setMultiPlay(true);
+            m_chomp.setVolume(0.75f);
+            
+            // Setup background music
+            m_bgMusic.load("music.mp3");
+            m_bgMusic.setLoop(true);
+            m_bgMusic.setVolume(0.3f); // Lower volume for background
+            m_bgMusic.play();
+        }
         std::shared_ptr<GameEvent> GetLastEvent(){return m_lastEvent;}
         void SetLastEvent(std::shared_ptr<GameEvent> event){this->m_lastEvent = event;}
         std::shared_ptr<PlayerCreature> GetPlayer(){return this->m_player;}
@@ -158,6 +169,8 @@ class AquariumGameScene : public GameScene {
         std::shared_ptr<GameEvent> m_lastEvent;
         string m_name;
         AwaitFrames updateControl{5};
+        ofSoundPlayer m_chomp;
+        ofSoundPlayer m_bgMusic;
 };
 
 

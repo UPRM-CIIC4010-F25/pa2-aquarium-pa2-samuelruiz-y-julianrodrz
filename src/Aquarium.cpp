@@ -296,6 +296,7 @@ void AquariumGameScene::Update(){
                 else{
                     this->m_aquarium->removeCreature(event->creatureB);
                     this->m_player->addToScore(1, event->creatureB->getValue());
+                    m_chomp.play();  // Play chomp sound when eating
                     if (this->m_player->getScore() % 25 == 0){
                         this->m_player->increasePower(1);
                         ofLogNotice() << "Player power increased to " << this->m_player->getPower() << "!" << std::endl;
@@ -319,6 +320,10 @@ void AquariumGameScene::Draw() {
     this->m_aquarium->draw();
     this->paintAquariumHUD();
 
+    // Ensure music keeps playing (will automatically loop)
+    if (!m_bgMusic.isPlaying()) {
+        m_bgMusic.play();
+    }
 }
 
 

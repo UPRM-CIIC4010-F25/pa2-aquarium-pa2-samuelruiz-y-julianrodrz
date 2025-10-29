@@ -12,7 +12,59 @@ void Creature::normalize() {
 }
 
 void Creature::bounce() {
-    // should implement boundary controls here
+    // Improved boundary handling with margin and smooth bounce
+    if (m_width <= 0 || m_height <= 0) return; // bounds not set yet
+
+    float margin = m_collisionRadius * 0.5f; // Use collision radius as margin
+    bool bounced = false;
+    
+    // Constrain position to keep sprite fully visible (with margin)
+    if (m_x < margin) {
+        m_x = margin;
+        if (m_dx < 0) { // Only bounce if moving toward boundary
+            m_dx = std::abs(m_dx); // Ensure positive x direction
+            bounced = true;
+        }
+    }
+    if (m_x > m_width - margin) {
+        m_x = m_width - margin;
+        if (m_dx > 0) { // Only bounce if moving toward boundary
+            m_dx = -std::abs(m_dx); // Ensure negative x direction
+            bounced = true;
+        }
+    }
+    
+    if (m_y < margin) {
+        m_y = margin;
+        if (m_dy < 0) { // Only bounce if moving toward boundary
+            m_dy = std::abs(m_dy); // Ensure positive y direction
+            bounced = true;
+        }
+    }
+    if (m_y > m_height - margin) {
+        m_y = m_height - margin;
+        if (m_dy > 0) { // Only bounce if moving toward boundary
+            m_dy = -std::abs(m_dy); // Ensure negative y direction
+            bounced = true;
+        }
+    }
+
+    if (bounced) {
+        // Add small random variation to prevent getting stuck in repetitive patterns
+        float angleVariation = (rand() % 20 - 10) * 0.01f; // ±0.1 radians variation
+        float cs = cos(angleVariation);
+        float sn = sin(angleVariation);
+        float px = m_dx;
+        float py = m_dy;
+        m_dx = px * cs - py * sn;
+        m_dy = px * sn + py * cs;
+        normalize();
+    }
+
+    // Update sprite direction based on horizontal movement
+    if (m_dx < 0.0f) setFlipped(true);
+    else if (m_dx > 0.0f) setFlipped(false);
+    // If m_dx == 0, keep current flip state
 }
 
 
@@ -48,7 +100,14 @@ void GameEvent::print() const {
 
 // collision detection between two creatures
 bool checkCollision(std::shared_ptr<Creature> a, std::shared_ptr<Creature> b) {
-    return false; 
+    if (!a || !b) return false;
+
+    // circle-based collision using each creature's collision radius
+    float dx = a->getX() - b->getX();
+    float dy = a->getY() - b->getY();
+    float radiusSum = a->getCollisionRadius() + b->getCollisionRadius();
+    float distSq = dx * dx + dy * dy;
+    return distSq <= (radiusSum * radiusSum);
 };
 
 
