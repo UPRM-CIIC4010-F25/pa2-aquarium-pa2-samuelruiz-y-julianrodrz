@@ -24,8 +24,8 @@ Grading
 ## Team Info
 | Student Number | Student Name | Student Email |
 |-|-|-|
-|(STUDENT NUMBER HERE)| (STUDENT NAME HERE)| (STUDENT EMAIL HERE) |
-|(STUDENT NUMBER HERE)| (STUDENT NAME HERE)| (STUDENT EMAIL HERE) |
+|(802218258)| (Samuel S Ruiz Vazquez)| (samuel.ruiz7@upr.edu) |
+|(802212798)| (Julián Rodríguez Rodríguez)| (julian.rodriguez14@upr.edu) |
 
 ---
 

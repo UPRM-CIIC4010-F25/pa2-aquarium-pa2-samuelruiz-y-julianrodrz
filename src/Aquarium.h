@@ -195,6 +195,8 @@ class AquariumGameScene : public GameScene {
             m_bgMusic.play();
             // registrar jugador para tiburon
             Shark::SetPlayer(m_player);
+            // sonido para powerup
+            ofAddListener(ofEvents().messageEvent, this, &AquariumGameScene::onMessageEvent);
 
         }
         std::shared_ptr<GameEvent> GetLastEvent(){return m_lastEvent;}
@@ -206,6 +208,11 @@ class AquariumGameScene : public GameScene {
         void Draw() override;
     private:
         void paintAquariumHUD();
+        //feedback system
+        void onMessageEvent(ofMessage &msg);
+        string m_feedbackMessage = "";
+        int m_feedbackTimer = 0;
+
         std::shared_ptr<PlayerCreature> m_player;
         std::shared_ptr<Aquarium> m_aquarium;
         std::shared_ptr<GameEvent> m_lastEvent;

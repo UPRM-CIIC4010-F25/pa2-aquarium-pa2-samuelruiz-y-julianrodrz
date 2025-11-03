@@ -412,6 +412,7 @@ void Aquarium::Repopulate() {
         ofLogNotice()<<"new level reached : " << selectedLevelIdx << std::endl;
         level = this->m_aquariumlevels.at(selectedLevelIdx);
         this->clearCreatures();
+        
     }
 
     
@@ -460,12 +461,19 @@ void AquariumGameScene::Update(){
                         this->m_player->loseLife(3*60);
                         if (this->m_player->getLives() <= 0) {
                             this->m_lastEvent = std::make_shared<GameEvent>(GameEventType::GAME_OVER, this->m_player, nullptr);
+
+                            m_feedbackMessage = "GAME OVER!";
+                            m_feedbackTimer = 300;
                             return;
                         }
                     } else {
                         this->m_aquarium->removeCreature(event->creatureB);
                         this->m_player->addToScore(1, event->creatureB->getValue());
                         m_chomp.play();
+
+                        m_feedbackMessage = "Nice Catch!";
+                        m_feedbackTimer = 120;
+
                         if (this->m_player->getScore() % 25 == 0) {
                             this->m_player->increasePower(1);
                             ofLogNotice() << "player power increased to " << this->m_player->getPower() << std::endl;
@@ -477,6 +485,9 @@ void AquariumGameScene::Update(){
                     this->m_player->increasePower(PowerUpCreature::POWER_BOOST);
                     this->m_player->setCollisionRadius(this->m_player->getCollisionRadius() * PowerUpCreature::SIZE_BOOST);
                     ofLogNotice() << "powerup collected power increased to " << this->m_player->getPower() << std::endl;
+
+                    m_feedbackMessage = "POWER INCREASED!";
+                    m_feedbackTimer = 180;
                 }
             } else {
                 ofLogError() << "error: creatureb is null in collision event" << std::endl;
@@ -510,7 +521,22 @@ void AquariumGameScene::paintAquariumHUD(){
         ofDrawCircle(panelWidth + i * 20, 50, 5);
     }
     ofSetColor(ofColor::white); // Reset color to white for other drawings
+
+    if (m_feedbackTimer > 0) {
+        ofSetColor(ofColor::yellow);
+        ofDrawBitmapStringHighlight(m_feedbackMessage, ofGetWidth() / 2 - 50, ofGetHeight() - 40);
+        ofSetColor(ofColor::white);
+        --m_feedbackTimer; //bajar el timer
 }
+}
+//brega con los mensajes del juego
+void AquariumGameScene::onMessageEvent(ofMessage &msg) {
+    if (msg.message == "LEVEL_UP") {
+        m_feedbackMessage = "LEVEL UP!";
+        m_feedbackTimer = 180; // visible por mas o menos 3 sedungdos
+    }
+}
+
 
 void AquariumLevel::populationReset(){
     for(auto node: this->m_levelPopulation){
