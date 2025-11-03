@@ -43,6 +43,20 @@ public:
 
     void setFlipped(bool flipped) { m_flipped = flipped; }
 
+    // report whether the image was successfully loaded
+    bool isLoaded() const { return m_image.isAllocated(); }
+
+    // draw the sprite centered at (x,y) instead of top-left
+    void drawCentered(float x, float y) const {
+        float drawX = x - (m_image.getWidth() / 2.0f);
+        float drawY = y - (m_image.getHeight() / 2.0f);
+        if (m_flipped) {
+            m_flippedImage.draw(drawX, drawY);
+        } else {
+            m_image.draw(drawX, drawY);
+        }
+    }
+
 private:
     ofImage m_image;
     ofImage m_flippedImage;

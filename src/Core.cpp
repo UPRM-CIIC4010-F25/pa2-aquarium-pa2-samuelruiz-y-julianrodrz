@@ -1,7 +1,7 @@
 #include "Core.h"
 
 
-// Creature Inherited Base Behavior
+// comportamiento base heredado de la criatura
 void Creature::setBounds(int w, int h) { m_width = w; m_height = h; }
 void Creature::normalize() {
     float length = std::sqrt(m_dx * m_dx + m_dy * m_dy);
@@ -12,24 +12,24 @@ void Creature::normalize() {
 }
 
 void Creature::bounce() {
-    // Improved boundary handling with margin and smooth bounce
-    if (m_width <= 0 || m_height <= 0) return; // bounds not set yet
+    // manejo mejorado de los limites con margen y rebote suave
+    if (m_width <= 0 || m_height <= 0) return; // limites no establecidos aun
 
-    float margin = m_collisionRadius * 0.5f; // Use collision radius as margin
+    float margin = m_collisionRadius * 0.5f; // usar radio de colision como margen
     bool bounced = false;
     
-    // Constrain position to keep sprite fully visible (with margin)
+    // restringir posicion para mantener el sprite visible con margen
     if (m_x < margin) {
         m_x = margin;
-        if (m_dx < 0) { // Only bounce if moving toward boundary
-            m_dx = std::abs(m_dx); // Ensure positive x direction
+        if (m_dx < 0) { // solo rebotar si se mueve hacia el limite
+            m_dx = std::abs(m_dx); // asegurar direccion x positiva
             bounced = true;
         }
     }
     if (m_x > m_width - margin) {
         m_x = m_width - margin;
-        if (m_dx > 0) { // Only bounce if moving toward boundary
-            m_dx = -std::abs(m_dx); // Ensure negative x direction
+        if (m_dx > 0) { // solo rebotar si se mueve hacia el limite
+            m_dx = -std::abs(m_dx); // asegurar direccion x negativa
             bounced = true;
         }
     }
@@ -50,8 +50,8 @@ void Creature::bounce() {
     }
 
     if (bounced) {
-        // Add small random variation to prevent getting stuck in repetitive patterns
-        float angleVariation = (rand() % 20 - 10) * 0.01f; // ±0.1 radians variation
+        // agregar variacion aleatoria pequena para evitar patrones repetitivos
+        float angleVariation = (rand() % 20 - 10) * 0.01f; // variacion de ±0.1 radianes
         float cs = cos(angleVariation);
         float sn = sin(angleVariation);
         float px = m_dx;
@@ -61,10 +61,10 @@ void Creature::bounce() {
         normalize();
     }
 
-    // Update sprite direction based on horizontal movement
+    // actualizar direccion del sprite segun movimiento horizontal
     if (m_dx < 0.0f) setFlipped(true);
     else if (m_dx > 0.0f) setFlipped(false);
-    // If m_dx == 0, keep current flip state
+    // si m_dx es 0 mantener el estado actual del flip
 }
 
 

@@ -1,8 +1,6 @@
 #include "ofApp.h"
 
-//--------------------------------------------------------------
-void ofApp::setup(){
-
+void ofApp::setup() {
     ofSetFrameRate(60);
     ofSetBackgroundColor(ofColor::blue);
     backgroundImage.load("background.png");
@@ -101,17 +99,18 @@ void ofApp::keyPressed(int key){
             case OF_KEY_UP:
                 gameScene->GetPlayer()->setDirection(gameScene->GetPlayer()->isXDirectionActive()?gameScene->GetPlayer()->getDx():0, -1);
                 break;
-                case OF_KEY_DOWN:
+            case OF_KEY_DOWN:
                 gameScene->GetPlayer()->setDirection(gameScene->GetPlayer()->isXDirectionActive()?gameScene->GetPlayer()->getDx():0, 1);
                 break;
             case OF_KEY_LEFT:
                 gameScene->GetPlayer()->setDirection(-1, gameScene->GetPlayer()->isYDirectionActive()?gameScene->GetPlayer()->getDy():0);
                 gameScene->GetPlayer()->setFlipped(true);
                 break;
-                case OF_KEY_RIGHT:
+            case OF_KEY_RIGHT:
                 gameScene->GetPlayer()->setDirection(1, gameScene->GetPlayer()->isYDirectionActive()?gameScene->GetPlayer()->getDy():0);
                 gameScene->GetPlayer()->setFlipped(false);
                 break;
+
             default:
                 break;
         }

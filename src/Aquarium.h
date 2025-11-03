@@ -4,15 +4,30 @@
 #include <memory>
 #include <iostream>
 #include <algorithm>
+#include "ofMain.h"
 #include "Core.h"
 
 
 enum class AquariumCreatureType {
     NPCreature,
-    BiggerFish
+    BiggerFish,
+    PowerUp,
+    Jellyfish,
+    Shark
 };
 
 string AquariumCreatureTypeToString(AquariumCreatureType t);
+
+class PowerUpCreature : public Creature {
+public:
+    PowerUpCreature(float x, float y, std::shared_ptr<GameSprite> sprite = nullptr);
+    void move() override;
+    void draw() const override;
+    static const int POWER_BOOST = 2;  // cuanto aumenta el poder
+    static const float SIZE_BOOST;      // cuanto aumenta el tamano
+private:
+    float m_angle = 0;  // para animacion flotante
+};
 
 class AquariumLevelPopulationNode{
     public:
@@ -93,6 +108,26 @@ public:
     void draw() const override;
 };
 
+class Jellyfish : public NPCreature {
+public:
+    Jellyfish(float x, float y, int speed, std::shared_ptr<GameSprite> sprite);
+    void move() override;
+    void draw() const override;
+private:
+    float m_angle = 0.0f;  // For sinusoidal motion
+    float m_spikeCooldown = 0;  // For upward spike movement
+};
+
+class Shark : public NPCreature {
+public:
+    Shark(float x, float y, int speed, std::shared_ptr<GameSprite> sprite);
+    void move() override;
+    void draw() const override;
+    static void SetPlayer(std::shared_ptr<PlayerCreature> p);
+private:
+    static std::weak_ptr<PlayerCreature> s_player;  // Reference to player for tracking
+    float m_detectionRadius = 300.0f;  // How close player needs to be for shark to chase
+};
 
 class AquariumSpriteManager {
     public:
@@ -102,6 +137,10 @@ class AquariumSpriteManager {
     private:
         std::shared_ptr<GameSprite> m_npc_fish;
         std::shared_ptr<GameSprite> m_big_fish;
+        std::shared_ptr<GameSprite> m_jelly_fish;
+        std::shared_ptr<GameSprite> m_shark;
+
+        // removed m_power_up png usage per request
 };
 
 
@@ -154,6 +193,9 @@ class AquariumGameScene : public GameScene {
             m_bgMusic.setLoop(true);
             m_bgMusic.setVolume(0.3f); // Lower volume for background
             m_bgMusic.play();
+            // registrar jugador para tiburon
+            Shark::SetPlayer(m_player);
+
         }
         std::shared_ptr<GameEvent> GetLastEvent(){return m_lastEvent;}
         void SetLastEvent(std::shared_ptr<GameEvent> event){this->m_lastEvent = event;}
@@ -187,7 +229,8 @@ class Level_1 : public AquariumLevel  {
     public:
         Level_1(int levelNumber, int targetScore): AquariumLevel(levelNumber, targetScore){
             this->m_levelPopulation.push_back(std::make_shared<AquariumLevelPopulationNode>(AquariumCreatureType::NPCreature, 20));
-
+            this->m_levelPopulation.push_back(std::make_shared<AquariumLevelPopulationNode>(AquariumCreatureType::BiggerFish, 3));
+            this->m_levelPopulation.push_back(std::make_shared<AquariumLevelPopulationNode>(AquariumCreatureType::Jellyfish, 4));
         };
         std::vector<AquariumCreatureType> Repopulate() override;
 
@@ -198,7 +241,8 @@ class Level_2 : public AquariumLevel  {
         Level_2(int levelNumber, int targetScore): AquariumLevel(levelNumber, targetScore){
             this->m_levelPopulation.push_back(std::make_shared<AquariumLevelPopulationNode>(AquariumCreatureType::NPCreature, 30));
             this->m_levelPopulation.push_back(std::make_shared<AquariumLevelPopulationNode>(AquariumCreatureType::BiggerFish, 5));
-
+            this->m_levelPopulation.push_back(std::make_shared<AquariumLevelPopulationNode>(AquariumCreatureType::Jellyfish, 6));
+            this->m_levelPopulation.push_back(std::make_shared<AquariumLevelPopulationNode>(AquariumCreatureType::Shark, 2));
         };
         std::vector<AquariumCreatureType> Repopulate() override;
 
